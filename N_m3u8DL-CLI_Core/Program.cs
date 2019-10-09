@@ -18,20 +18,6 @@ namespace N_m3u8DL_CLI_Core
     {
         public static bool isWindows = true;
 
-        //用于证书验证  
-        public static bool CertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {
-            X509Chain verify = new X509Chain();
-            verify.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-            verify.ChainPolicy.RevocationMode = X509RevocationMode.Online; //revocation checking  
-            verify.ChainPolicy.RevocationFlag = X509RevocationFlag.ExcludeRoot;
-            if (verify.Build(new X509Certificate2(certificate)))
-            {
-                return true;
-            }
-            return false;
-        }
-
         static void Main(string[] args)
         {
             try
@@ -39,9 +25,6 @@ namespace N_m3u8DL_CLI_Core
                 //判断操作系统
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
                     isWindows = false;
-
-                ServicePointManager.ServerCertificateValidationCallback = CertificateValidationCallback;
-                //Init时执行，用于注册方法。
 
                 string CURRENT_PATH = Directory.GetCurrentDirectory();
                 string fileName = "";
