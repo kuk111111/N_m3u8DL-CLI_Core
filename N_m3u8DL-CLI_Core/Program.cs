@@ -280,7 +280,7 @@ namespace N_m3u8DL_CLI_Core
 
 
                 //优酷DRM设备更改
-                if (testurl.Contains("playlist/m3u8"))
+                /*if (testurl.Contains("playlist/m3u8"))
                 {
                     string drm_type = Global.GetQueryString("drm_type", testurl);
                     string drm_device = Global.GetQueryString("drm_device", testurl);
@@ -292,7 +292,7 @@ namespace N_m3u8DL_CLI_Core
                     {
                         testurl = testurl.Replace("drm_device=" + drm_device, "drm_device=11");
                     }
-                }
+                }*/
                 string m3u8Content = string.Empty;
                 bool isVOD = true;
 
