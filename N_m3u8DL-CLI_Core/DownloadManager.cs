@@ -13,6 +13,7 @@ namespace N_m3u8DL_CLI_Core
         private int stopCount = 0;           //速度为零的停止
         private int timeOut = 10000;         //超时设置
         private static double downloadedSize = 0;   //已下载大小
+        private static bool disableIntegrityCheck = false; //关闭完整性检查
 
         private string jsonFile = string.Empty;
         private string headers = string.Empty;
@@ -56,6 +57,7 @@ namespace N_m3u8DL_CLI_Core
         public static int CalcTime { get => calcTime; set => calcTime = value; }
         public static int Count { get => count; set => count = value; }
         public static int PartsCount { get => partsCount; set => partsCount = value; }
+        public static bool DisableIntegrityCheck { get => disableIntegrityCheck; set => disableIntegrityCheck = value; }
 
         public void DoDownload()
         {
@@ -333,11 +335,19 @@ namespace N_m3u8DL_CLI_Core
         public void IsComplete(int segCount)
         {
             int tsCount = 0;
-            for (int i = 0; i < PartsCount; i++)
+
+            if (DisableIntegrityCheck)
             {
-                tsCount += Global.GetFileCount(DownDir + "/Part_" + i.ToString(partsPadZero), ".ts");
+                tsCount = segCount;
+                goto ll;
             }
 
+            for (int i = 0; i < PartsCount; i++)
+            {
+                tsCount += Global.GetFileCount(DownDir + "\\Part_" + i.ToString(partsPadZero), ".ts");
+            }
+
+        ll:
             if (tsCount != segCount)
             {
                 LOGGER.PrintLine("完成数量 " + tsCount + " / " + segCount);
@@ -354,7 +364,7 @@ namespace N_m3u8DL_CLI_Core
             }
             else  //开始合并
             {
-                LOGGER.PrintLine("已下载完毕");
+                LOGGER.PrintLine("已下载完毕" + (DisableIntegrityCheck ? "(已关闭完整性检查)" : ""));
                 Console.WriteLine();
                 if (NoMerge == false)
                 {

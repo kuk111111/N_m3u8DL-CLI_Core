@@ -5,9 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Security;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -98,6 +96,8 @@ namespace N_m3u8DL_CLI_Core
                 int timeOut = 10; //默认10秒
                 string baseUrl = "";
                 string reqHeaders = "";
+                string keyFile = "";
+                string keyBase64 = "";
                 string muxSetJson = "MUXSETS.json";
                 string workDir = Path.Combine(CURRENT_PATH, "Downloads");
                 bool muxFastStart = false;
@@ -154,6 +154,10 @@ namespace N_m3u8DL_CLI_Core
                 {
                     muxFastStart = true;
                 }
+                if (arguments.Has("--disableIntegrityCheck"))
+                {
+                    DownloadManager.DisableIntegrityCheck = true;
+                }
                 if (arguments.Has("--enableAudioOnly"))
                 {
                     Global.VIDEO_TYPE = "IGNORE";
@@ -170,6 +174,15 @@ namespace N_m3u8DL_CLI_Core
                 if (arguments.Has("--saveName"))
                 {
                     fileName = arguments.Get("--saveName").Next;
+                }
+                if (arguments.Has("--useKeyFile"))
+                {
+                    if (File.Exists(arguments.Get("--useKeyFile").Next))
+                        keyFile = arguments.Get("--useKeyFile").Next;
+                }
+                if (arguments.Has("--useKeyBase64"))
+                {
+                    keyBase64 = arguments.Get("--useKeyBase64").Next;
                 }
                 if (arguments.Has("--stopSpeed"))
                 {
@@ -308,6 +321,8 @@ namespace N_m3u8DL_CLI_Core
                 parser.DownName = fileName;
                 parser.DownDir = Path.Combine(workDir, parser.DownName);
                 parser.M3u8Url = testurl;
+                parser.KeyBase64 = keyBase64;
+                parser.KeyFile = keyFile;
                 if (baseUrl != "")
                     parser.BaseUrl = baseUrl;
                 parser.Headers = reqHeaders;
